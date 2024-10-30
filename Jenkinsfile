@@ -7,10 +7,14 @@ def services = [
     'offers-microservice-spring-boot': 'offer',
     'shoes-microservice-spring-boot': 'shoe'                     
 ]
-def buildImages = false
+def buildImages = true
 
 pipeline {
     agent any
+
+    parameters {
+        booleanParam(name: 'buildImages', defaultValue: false, description: 'Build Docker images?')
+    }
     
     environment{
         DOCKERHUB_CREDENTIALS = credentials('docker-cred')
@@ -26,7 +30,7 @@ pipeline {
         }    
         stage('Build Docker Images') {
             when {
-                expression { buildImages } // The stage will run if buildImages is true
+                expression { params.buildImages } // The stage will run if buildImages is true
             }
             steps {
                 script {
