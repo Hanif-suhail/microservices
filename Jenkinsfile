@@ -13,7 +13,7 @@ pipeline {
     agent any
 
     parameters {
-        booleanParam(name: 'buildImages', defaultValue: false, description: 'Build Docker images?')
+        booleanParam(name: 'buildImages', defaultValue: true, description: 'Build Docker images?')
     }
     
     environment{
