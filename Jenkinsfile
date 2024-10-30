@@ -29,6 +29,7 @@ pipeline {
                 script {
                     // Loop through directories to build Docker images
                     services.each { dir, image ->
+                        echo "Processing directory: ${dir} with image name: ${image}"
                         if (fileExists("${dir}/Dockerfile")) {
                             dir("${dir}") {
                                 // Build the Docker image
