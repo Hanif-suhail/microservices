@@ -20,7 +20,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'feature', credentialsId: 'Git-Cred', url: 'https://github.com/Hanif-suhail/microservices.git'
+                git branch: 'main', credentialsId: 'Git-Cred', url: 'https://github.com/Hanif-suhail/microservices.git'
             }
         }
         
