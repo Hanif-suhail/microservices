@@ -31,15 +31,24 @@ pipeline {
                     services.each { dir, image ->
                         echo "Processing directory: ${dir} with image name: ${image}"
                         if (fileExists("${dir}/Dockerfile")) {
+                            echo "Dockerfile found in ${dir}, attempting to build ${DOCKER_REPO}/${image}:latest"
                             dir("${dir}") {
-                                // Build the Docker image
-                                docker.build("${DOCKER_REPO}/${image}:latest", ".")
+                                try {
+                                    docker.build("${DOCKER_REPO}/${image}:latest", ".")
+                                    echo "Successfully built ${DOCKER_REPO}/${image}:latest"
+                                } catch (Exception e) {
+                                    echo "Failed to build Docker image for ${dir}: ${e.getMessage()}"
+                                }
                             }
+                        } else {
+                            echo "Dockerfile not found in ${dir}, skipping build"
                         }
                     }
                 }
             }
-        }
+        }else {
+                    echo "Dockerfile not found in ${dir}, skipping build."
+                }
         
         stage('Push Docker Images') {
             steps {
