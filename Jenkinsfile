@@ -36,7 +36,7 @@ pipeline {
                             sh """
                                 cd ${dir}
                                 echo "Current working directory: \$(pwd)"
-                                ls -la // This will list all files in the directory
+                                ls -la
                                 docker build -t ${DOCKER_REPO}/${image}:latest .
                                 echo "Successfully built ${DOCKER_REPO}/${image}:latest"
                             """
