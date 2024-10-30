@@ -7,6 +7,7 @@ def services = [
     'offers-microservice-spring-boot': 'offer',
     'shoes-microservice-spring-boot': 'shoe'                     
 ]
+def buildImages = false
 
 pipeline {
     agent any
@@ -23,7 +24,7 @@ pipeline {
                 git branch: 'main', credentialsId: 'Git-Cred', url: 'https://github.com/Hanif-suhail/microservices.git'
             }
         }
-        
+    if (buildImages) {    
         stage('Build Docker Images') {
             steps {
                 script {
@@ -47,28 +48,26 @@ pipeline {
                 }
             }
         } 
-        
+    }    
         stage('Push Docker Images') {
             steps {
                 script {
                     // Loop through directories to push Docker images to the registry
                     services.each { dir, image ->
-                        if (fileExists("${dir}/Dockerfile")) {
-                            dir("${dir}") {
-                                // Push the Docker image
-                                docker.image("${DOCKER_REPO}/${image}:latest").push()
-                            }
-                        }
+                        sh """
+                            echo "Pushing Docker image: ${DOCKER_REPO}/${image}:latest"
+                            docker push ${DOCKER_REPO}/${image}:latest
+                        """      
                     }
                 }
             }
         }
-        
+
         stage('Deploy to Kubernetes') {
             steps {
                 script {
                     // Deploy each service using the deployment file in its respective directory
-                    withKubeConfig(caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'K8-token', namespace: 'jenkins', restrictKubeConfigAccess: false, serverUrl: 'https://127.0.0.1:45574') {
+                    withKubeConfig(caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'K8-token', namespace: 'jenkins', restrictKubeConfigAccess: false, serverUrl: 'https://127.0.0.1:52737') {
                         services.each { dir, service ->
                             sh "kubectl apply -f ${dir}/kube.yaml --namespace=${KUBE_NAMESPACE}"
                         }
