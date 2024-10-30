@@ -31,7 +31,7 @@ const App = () => {
 
 
   const handleApiCall = async (e) => {
-    let url = 'http://'+details.IPv4+':32470/'+e.target.name
+    let url = 'http://zuul-api-gateway:9999/'+e.target.name
     console.log(details.IPv4)
     console.log(url)
     displayData.url=url
