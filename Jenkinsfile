@@ -29,15 +29,6 @@ pipeline {
                 script {
                     // Loop through directories to build Docker images
                     sh "docker --version"
-                    try {
-                        dir('ui-web-app-reactjs') {
-                            docker.build("test-image:latest", ".")
-                        }
-                        echo "Docker build test passed."
-                    } catch (Exception e) {
-                        echo "Docker build test failed: ${e.getMessage()}"
-                        error("Docker is not accessible to Jenkins.")
-                    }
                     services.each { dir, image ->
                         echo "Processing directory: ${dir} with image name: ${image}"
                         if (fileExists("${dir}/Dockerfile")) {
