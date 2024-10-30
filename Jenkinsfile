@@ -33,17 +33,13 @@ pipeline {
                         echo "Processing directory: ${dir} with image name: ${image}"
                         if (fileExists("${dir}/Dockerfile")) {
                             echo "Dockerfile found in ${dir}, attempting to build ${DOCKER_REPO}/${image}:latest"
-                            dir("${dir}") {
-                                echo "Current working directory: ${pwd()}"
-                                sh "ls -la" // This will list all files in the directory
-                                try {
-                                    echo "Attempt to build on ${dir}"
-                                    docker.build("${DOCKER_REPO}/${image}:latest", ".")
-                                    echo "Successfully built ${DOCKER_REPO}/${image}:latest"
-                                } catch (Exception e) {
-                                    echo "Failed to build Docker image for ${dir}: ${e.getMessage()}"
-                                }
-                            }
+                            sh """
+                                cd ${dir}
+                                echo "Current working directory: \$(pwd)"
+                                ls -la // This will list all files in the directory
+                                docker build -t ${DOCKER_REPO}/${image}:latest .
+                                echo "Successfully built ${DOCKER_REPO}/${image}:latest"
+                            """
                         } else {
                             echo "Dockerfile not found in ${dir}, skipping build"
                         }
