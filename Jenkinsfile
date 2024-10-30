@@ -23,9 +23,11 @@ pipeline {
             steps {
                 git branch: 'main', credentialsId: 'Git-Cred', url: 'https://github.com/Hanif-suhail/microservices.git'
             }
-        }
-    if (buildImages) {    
+        }    
         stage('Build Docker Images') {
+            when {
+                expression { buildImages } // The stage will run if buildImages is true
+            }
             steps {
                 script {
                     // Loop through directories to build Docker images
@@ -47,8 +49,7 @@ pipeline {
                     }
                 }
             }
-        } 
-    }    
+        }  
         stage('Push Docker Images') {
             steps {
                 script {
