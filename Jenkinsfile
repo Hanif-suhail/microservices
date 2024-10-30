@@ -44,6 +44,7 @@ pipeline {
                             echo "Dockerfile found in ${dir}, attempting to build ${DOCKER_REPO}/${image}:latest"
                             dir("${dir}") {
                                 try {
+                                    echo "Attempt to build on ${dir}"
                                     docker.build("${DOCKER_REPO}/${image}:latest", ".")
                                     echo "Successfully built ${DOCKER_REPO}/${image}:latest"
                                 } catch (Exception e) {
