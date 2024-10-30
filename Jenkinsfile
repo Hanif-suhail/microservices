@@ -1,3 +1,13 @@
+// Define services and their Docker image names
+def services = [
+    'ui-web-app-reactjs': 'ui',
+    'wishlist-microservice-python': 'wishlist',
+    'zuul-api-gateway': 'zuul',
+    'cart-microservice-nodejs': 'cart',
+    'offers-microservice-spring-boot': 'offer',
+    'shoes-microservice-spring-boot': 'shoe'                     
+]
+
 pipeline {
     agent any
     
@@ -17,15 +27,6 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 script {
-                    // Define services and their Docker image names
-                    def services = [
-                        'ui-web-app-reactjs': 'ui-web-app',
-                        'wishlist-microservice-python': 'wishlist-service',
-                        'zuul-api-gateway': 'zuul-gateway',
-                        'cart-microservice-nodejs': 'cart-service',
-                        'offers-microservice-spring-boot': 'offers-service',
-                        'shoes-microservice-spring-boot': 'shoes-service'
-                    ]
                     // Loop through directories to build Docker images
                     services.each { dir, image ->
                         if (fileExists("${dir}/Dockerfile")) {
@@ -42,16 +43,6 @@ pipeline {
         stage('Push Docker Images') {
             steps {
                 script {
-                    sh "echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin"
-                    // Define services and their Docker image names again for pushing
-                    def services = [
-                        'ui-web-app-reactjs': 'ui-web-app',
-                        'wishlist-microservice-python': 'wishlist-service',
-                        'zuul-api-gateway': 'zuul-gateway',
-                        'cart-microservice-nodejs': 'cart-service',
-                        'offers-microservice-spring-boot': 'offers-service',
-                        'shoes-microservice-spring-boot': 'shoes-service'
-                    ]
                     // Loop through directories to push Docker images to the registry
                     services.each { dir, image ->
                         if (fileExists("${dir}/Dockerfile")) {
@@ -68,14 +59,6 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    def services = [
-                        'ui-web-app-reactjs': 'ui-web-app',
-                        'wishlist-microservice-python': 'wishlist-service',
-                        'zuul-api-gateway': 'zuul-gateway',
-                        'cart-microservice-nodejs': 'cart-service',
-                        'offers-microservice-spring-boot': 'offers-service',
-                        'shoes-microservice-spring-boot': 'shoes-service'
-                    ]
                     // Deploy each service using the deployment file in its respective directory
                     withKubeConfig(caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'K8-token', namespace: 'jenkins', restrictKubeConfigAccess: false, serverUrl: 'https://127.0.0.1:45574') {
                         services.each { dir, service ->

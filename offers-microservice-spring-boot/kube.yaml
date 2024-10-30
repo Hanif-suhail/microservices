@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "offer-ui"
+  labels:
+    app: "offer-ui"
+spec:
+  selector:
+    matchLabels:
+      app: "offer-ui"
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: offer-ui
+    spec:
+      containers:
+      - name: "offer-ui"
+        image: "hanifsuhail/offer:latest"
+        imagePullPolicy: "Always"
+        ports:
+        - containerPort: 1001
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: "offer-ui"
+  name: "offer"
+spec:
+  selector:
+    app: "offer-ui"
+  type: ClusterIP
+  ports:
+  - name: "http"
+    port: 1001
+    targetPort: 1001
