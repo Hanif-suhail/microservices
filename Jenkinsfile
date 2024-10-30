@@ -34,6 +34,8 @@ pipeline {
                         if (fileExists("${dir}/Dockerfile")) {
                             echo "Dockerfile found in ${dir}, attempting to build ${DOCKER_REPO}/${image}:latest"
                             dir("${dir}") {
+                                echo "Current working directory: ${pwd()}"
+                                sh "ls -la" // This will list all files in the directory
                                 try {
                                     echo "Attempt to build on ${dir}"
                                     docker.build("${DOCKER_REPO}/${image}:latest", ".")
