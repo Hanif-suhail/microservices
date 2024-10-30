@@ -46,9 +46,7 @@ pipeline {
                     }
                 }
             }
-        }else {
-                    echo "Dockerfile not found in ${dir}, skipping build."
-                }
+        } 
         
         stage('Push Docker Images') {
             steps {
